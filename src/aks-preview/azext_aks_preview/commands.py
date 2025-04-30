@@ -466,3 +466,9 @@ def load_command_table(self, _):
         "aks check-network", managed_clusters_sdk, client_factory=cf_managed_clusters
     ) as g:
         g.custom_command("outbound", "aks_check_network_outbound")
+
+    # AKS Debug command
+    with self.command_group(
+        "aks debug", managed_clusters_sdk, client_factory=cf_managed_clusters
+    ) as g:
+        g.custom_command("ask", "aks_debug_ask")

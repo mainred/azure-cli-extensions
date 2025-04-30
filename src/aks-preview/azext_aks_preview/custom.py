@@ -128,6 +128,8 @@ from knack.util import CLIError
 from six.moves.urllib.error import URLError
 from six.moves.urllib.request import urlopen
 
+
+
 logger = get_logger(__name__)
 
 
@@ -3706,6 +3708,30 @@ def aks_check_network_outbound(
                             instance_id,
                             vm_name,
                             custom_endpoints)
+
+
+
+def aks_debug_ask(
+        cmd,
+        client,
+        question=None):
+
+
+    from holmes.core.tool_calling_llm import ToolCallingLLM
+    from holmes.core.tools import ToolExecutor
+    from holmes.plugins.toolsets import load_builtin_toolsets
+    from holmes.plugins.prompts import load_and_render_prompt
+    from holmes.core.llm import DefaultLLM
+    system_prompt = load_and_render_prompt(
+        prompt="builtin://generic_ask.jinja2", context={}
+    )
+
+    tool_executor = ToolExecutor(load_builtin_toolsets())
+    ai = ToolCallingLLM(tool_executor, max_steps=10, llm=DefaultLLM("azure/gpt-4.5-preview"))
+
+    response = ai.prompt_call(system_prompt, question)
+
+    print(response.model_dump())
 
 
 # pylint: disable=unused-argument

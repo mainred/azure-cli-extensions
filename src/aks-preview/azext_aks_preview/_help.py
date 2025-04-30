@@ -3434,3 +3434,20 @@ helps['aks loadbalancer show'] = """
         - name: Show details of a load balancer configuration in table format
           text: az aks loadbalancer show -g MyResourceGroup -n kubernetes --cluster-name MyManagedCluster -o table
 """
+
+helps['aks debug'] = """
+    type: group
+    short-summary: Commands to troubleshoot AKS issues powered by AI.
+"""
+
+helps['aks debug aks'] = """
+    type: command
+    short-summary: Debug AKS cluster issues powered by AI.
+    parameters:
+        - name: --question -q
+          type: string
+          short-summary: Issues you want to address.
+    examples:
+        - name: Debug a DNS resolution failure in the cluster
+          text: az aks debug ask -q "Why is my DNS resolution failing in the cluster?"
+"""

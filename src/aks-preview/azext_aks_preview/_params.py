@@ -2343,6 +2343,10 @@ def load_arguments(self, _):
                    help='Space-separated additional endpoint(s) to perform the connectivity check.',
                    validator=validate_custom_endpoints)
 
+    with self.argument_context('aks debug ask') as c:
+        c.argument('question', options_list=['--question', '-q'],
+                   required=True, help='Issue you want to address.')
+
     # AKS loadbalancer command parameter configuration
     with self.argument_context("aks loadbalancer add") as c:
         c.argument(
