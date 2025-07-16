@@ -2732,6 +2732,19 @@ def load_arguments(self, _):
             ),
         )
 
+    with self.argument_context("aks agent") as c:
+        c.positional("prompt", help="What to ask the LLM (user prompt)")
+        c.argument(
+            "api_key",
+            required=False,
+            help="API key to use for the LLM (if not given, uses environment variables OPENAI_API_KEY or AZURE_API_KEY)"
+        )
+        c.argument(
+            "model",
+            required=False,
+            help="Model to use for the LLM"
+        )
+
     # Define parameters for show and delete commands
     for scope in [
         "aks loadbalancer show",
@@ -2743,7 +2756,6 @@ def load_arguments(self, _):
                 options_list=["--name", "-n"],
                 help="Name of the load balancer configuration. Required.",
             )
-
 
 def _get_default_install_location(exe_name):
     system = platform.system()

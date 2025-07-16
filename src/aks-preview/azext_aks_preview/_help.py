@@ -3850,3 +3850,20 @@ helps['aks loadbalancer show'] = """
         - name: Show details of a load balancer configuration in table format
           text: az aks loadbalancer show -g MyResourceGroup -n kubernetes --cluster-name MyManagedCluster -o table
 """
+
+helps['aks agent'] = """
+    type: command
+    short-summary: Interactive Azure Kubernetes cluster troubleshoot tool powered by AI.
+    parameters:
+        - name: --api-key
+          type: string
+          short-summary: API key to use for the LLM (if not given, uses environment variables OPENAI_API_KEY or AZURE_API_KEY).
+        - name: --model
+          type: string
+          short-summary: Model to use for the LLM.
+    examples:
+        - name: Investigate the DNS resolution issue in the AKS cluster
+          text: az aks agent "Investigate the DNS resolution issue"
+        - name: Investigate the upgrade failure of AKS cluster
+          text: az aks agent "Investigate the upgrade failure of cluster"
+"""

@@ -10,6 +10,7 @@ import os
 import os.path
 import platform
 import ssl
+import subprocess
 import sys
 import threading
 import time
@@ -4333,3 +4334,16 @@ def aks_loadbalancer_rebalance_nodes(
     }
 
     return aks_loadbalancer_rebalance_internal(managed_clusters_client, parameters)
+
+def aks_agent(prompt, api_key, model):
+    """
+    Ask any question and answer using available tools
+    """
+    cmd_args = ["holmes", "ask", prompt]
+    if api_key:
+        cmd_args.extend(["--api-key", api_key])
+    if model:
+        cmd_args.extend(["--model", model])
+
+    process = subprocess.Popen(cmd_args)
+    process.communicate()
