@@ -11,7 +11,14 @@ To release a new version, please select a new version number (usually plus 1 to 
 
 Pending
 +++++++
+
+
+1.0.0b3
++++++++
+
 * Don't print version check at bottom toolbar
+* Bump holmesgpt to 0.14.2 - TODO: summarize changes
+
 
 1.0.0b2
 +++++++
