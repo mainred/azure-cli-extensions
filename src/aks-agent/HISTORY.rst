@@ -12,6 +12,10 @@ To release a new version, please select a new version number (usually plus 1 to 
 Pending
 +++++++
 
+1.0.0b22
+++++++++
+* Feature: Add Microsoft Entra ID (formerly Azure AD) authentication support for Azure OpenAI
+
 1.0.0b21
 ++++++++
 * Bump aks-agent to v0.6.0
