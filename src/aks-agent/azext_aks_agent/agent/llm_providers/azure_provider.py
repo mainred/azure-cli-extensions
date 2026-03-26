@@ -24,7 +24,7 @@ def is_valid_api_base(v: str) -> bool:
 class AzureProvider(LLMProvider):
     @property
     def readable_name(self) -> str:
-        return "Azure OpenAI"
+        return "Azure OpenAI (API Key)"
 
     @property
     def model_route(self) -> str:
@@ -43,8 +43,8 @@ class AzureProvider(LLMProvider):
             "api_key": {
                 "secret": True,
                 "default": None,
-                "hint": "press enter to enable keyless authentication with Microsoft Entra ID",
-                "validator": lambda v: True
+                "hint": None,
+                "validator": non_empty
             },
             "api_base": {
                 "secret": False,
@@ -65,11 +65,8 @@ class AzureProvider(LLMProvider):
         api_version = params.get("api_version")
         deployment_name = params.get("model")
 
-        if not all([api_base, api_version, deployment_name]):
+        if not all([api_key, api_base, api_version, deployment_name]):
             return "Missing required Azure parameters.", "retry_input"
-
-        if not api_key or not api_key.strip():
-            return None, "save"
 
         # REST API reference: https://learn.microsoft.com/en-us/azure/ai-foundry/openai/api-version-lifecycle?tabs=rest
         url = urljoin(api_base, f"openai/deployments/{deployment_name}/chat/completions")

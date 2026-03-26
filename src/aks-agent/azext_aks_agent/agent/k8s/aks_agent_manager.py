@@ -232,7 +232,7 @@ class AKSAgentManager(AKSAgentManagerLLMConfigBase):  # pylint: disable=too-many
             )
 
             if not secret.data:
-                logger.warning("Secret '%s' exists but has no data", self.llm_secret_name)
+                logger.debug("Secret '%s' exists but has no data", self.llm_secret_name)
                 return
 
             # Decode secret data (base64 encoded)

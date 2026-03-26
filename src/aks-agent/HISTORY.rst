@@ -14,7 +14,10 @@ Pending
 
 1.0.0b22
 ++++++++
-* Feature: Add Microsoft Entra ID (formerly Azure AD) authentication support for Azure OpenAI
+* Bump aks-agent to v0.7.1
+  * Suppress litellm debug logs
+* Feature: Separate Azure OpenAI provider into API Key and Microsoft Entra ID (keyless) providers
+* Feature: Add --yes/-y flag to agent-cleanup command to skip confirmation prompt
 
 1.0.0b21
 ++++++++

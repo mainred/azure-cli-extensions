@@ -19,6 +19,7 @@ from azext_aks_agent.agent.console import (
 from azext_aks_agent.agent.k8s import AKSAgentManager, AKSAgentManagerClient
 from azext_aks_agent.agent.k8s.aks_agent_manager import AKSAgentManagerLLMConfigBase
 from azext_aks_agent.agent.llm_providers import prompt_provider_choice
+from azext_aks_agent.agent.llm_providers.azure_entraid_provider import AzureEntraIDProvider
 from azext_aks_agent.agent.telemetry import CLITelemetryClient
 from azure.cli.core.azclierror import AzCLIError
 from azure.cli.core.commands.client_factory import get_subscription_id
@@ -178,6 +179,19 @@ def _setup_helm_deployment(console, aks_agent_manager: AKSAgentManager):
         console.print(
             f"\n👤 Current service account in namespace '{aks_agent_manager.namespace}': {service_account_name}",
             style="cyan")
+        
+        # Check if using Azure Entra ID provider and show role assignment reminder
+        model_list = aks_agent_manager.get_llm_config()
+        if model_list and any("azure/" in model_name and not model_config.get("api_key") for model_name, model_config in model_list.items()):
+            console.print(
+                f"\n⚠️  IMPORTANT: If using keyless authentication with Azure OpenAI, ensure the 'Cognitive Services OpenAI User' or 'Azure AI Developer' role "
+                f"is assigned to the workload identity (service account: {service_account_name}).",
+                style=f"bold {INFO_COLOR}"
+            )
+            console.print(
+                "Learn more: https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/managed-identity\n",
+                style=INFO_COLOR
+            )
 
     elif helm_status == "not_found":
         console.print(
@@ -196,6 +210,19 @@ def _setup_helm_deployment(console, aks_agent_manager: AKSAgentManager):
             "To have access to Azure resources, the service account should be annotated with "
             "'azure.workload.identity/client-id: <managed-identity-client-id>'.",
             style=WARNING_COLOR)
+        
+        # Check if using Azure Entra ID provider and show role assignment note
+        model_list = aks_agent_manager.get_llm_config()
+        if model_list and any("azure/" in model_name and not model_config.get("api_key") for model_name, model_config in model_list.items()):
+            console.print(
+                "\n⚠️  NOTE: You are using keyless authentication with Azure OpenAI. "
+                "Ensure the 'Cognitive Services OpenAI User' or 'Azure AI Developer' role is assigned to the workload identity.",
+                style=f"bold {INFO_COLOR}"
+            )
+            console.print(
+                "Learn more: https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/managed-identity",
+                style=INFO_COLOR
+            )
 
         # Prompt user for service account name (required)
         while True:
@@ -422,6 +449,7 @@ def aks_agent_cleanup(
         cluster_name,
         namespace,
         mode=None,
+        yes=False,
 ):
     """Cleanup and uninstall the AKS agent."""
     with CLITelemetryClient(event_type="cleanup") as telemetry_client:
@@ -442,16 +470,17 @@ def aks_agent_cleanup(
                 f"⚠️  Warning: --namespace '{namespace}' is specified but will be ignored in client mode.",
                 style=WARNING_COLOR)
 
-        console.print(
-            "\n⚠️  Warning: This will uninstall the AKS agent and delete all associated resources.",
-            style=WARNING_COLOR)
+        if not yes:
+            console.print(
+                "\n⚠️  Warning: This will uninstall the AKS agent and delete all associated resources.",
+                style=WARNING_COLOR)
 
-        user_confirmation = console.input(
-            f"\n[{WARNING_COLOR}]Are you sure you want to proceed with cleanup? (y/N): [/]").strip().lower()
+            user_confirmation = console.input(
+                f"\n[{WARNING_COLOR}]Are you sure you want to proceed with cleanup? (y/N): [/]").strip().lower()
 
-        if user_confirmation not in ['y', 'yes']:
-            console.print("❌ Cleanup cancelled.", style=INFO_COLOR)
-            return
+            if user_confirmation not in ['y', 'yes']:
+                console.print("❌ Cleanup cancelled.", style=INFO_COLOR)
+                return
 
         console.print("\n🗑️  Starting cleanup (this typically takes a few seconds)...", style=INFO_COLOR)
 
